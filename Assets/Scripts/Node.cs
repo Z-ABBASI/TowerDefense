@@ -19,7 +19,7 @@ public class Node : MonoBehaviour
 
     BuildManager buildManager;
 
-    private void Start()
+    void Start()
     {
         rend = GetComponent<Renderer>();
         startColor = rend.material.color;
@@ -32,7 +32,7 @@ public class Node : MonoBehaviour
         return transform.position + positionOffset;
     }
 
-    private void OnMouseDown()
+    void OnMouseDown()
     {
         if (EventSystem.current.IsPointerOverGameObject())
         {
@@ -97,7 +97,18 @@ public class Node : MonoBehaviour
         Debug.Log("Turret upgraded!");
     }
 
-    private void OnMouseEnter()
+    public void SellTurret()
+    {
+        PlayerStats.Money += turretBlueprint.GetSellAmount();
+        
+        GameObject effect = (GameObject)Instantiate(buildManager.sellEffect, GetBuildPosition(), Quaternion.identity);
+        Destroy(effect, 5f);
+        
+        Destroy(turret);
+        turretBlueprint = null;
+    }
+
+    void OnMouseEnter()
     {
         if (EventSystem.current.IsPointerOverGameObject())
         {
@@ -119,7 +130,7 @@ public class Node : MonoBehaviour
         }
     }
 
-    private void OnMouseExit()
+    void OnMouseExit()
     {
         rend.material.color = startColor;
     }

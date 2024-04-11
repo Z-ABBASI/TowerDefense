@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Enemy : MonoBehaviour
 {
@@ -10,21 +11,31 @@ public class Enemy : MonoBehaviour
     [HideInInspector]
     public float speed;
 
-    public float health;
+    public float startHealth;
+    private float health;
 
     public int worth;
 
     public GameObject deathEffect;
 
-    private void Start()
+    [Header("Unity Stuff")]
+    public Image healthBar;
+
+    private bool isDead = false;
+
+    void Start()
     {
         speed = startSpeed;
+        health = startHealth;
     }
 
     public void TakeDamage(float amount)
     {
         health -= amount;
-        if (health <= 0)
+
+        healthBar.fillAmount = health / startHealth;
+        
+        if (health <= 0 && !isDead)
         {
             Die();
         }
@@ -37,10 +48,14 @@ public class Enemy : MonoBehaviour
 
     void Die()
     {
+        isDead = true;
+        
         PlayerStats.Money += worth;
         
         GameObject effect = (GameObject)Instantiate(deathEffect, transform.position, Quaternion.identity);
         Destroy(effect, 5f);
+
+        WaveSpawner.enemiesAlive--;
         
         Destroy(gameObject);
     }
